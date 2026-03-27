@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+/* Standard Card Style */
+.card {
+  @apply bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md;
+}
+
+/* Navigation Link */
+.nav-link {
+  @apply text-gray-600 hover:text-indigo-600 font-medium transition-colors;
+}
+
+/* Primary Button */
+.btn-primary {
+  @apply bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-all shadow-sm active:scale-95;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  @apply bg-white text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all active:scale-95;
+}
