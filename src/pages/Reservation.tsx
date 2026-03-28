@@ -269,7 +269,7 @@ export default function ReservationPage() {
                 </div>
               </div>
 
-              <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white">
+              <div className="relative aspect-[4/3] rounded-3xl md:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 md:border-8 border-white">
                 <img 
                   src={room.images[0]} 
                   alt={room.name} 
@@ -313,11 +313,11 @@ export default function ReservationPage() {
             </div>
 
             {/* Right Column: Form & Payment */}
-            <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-xl border border-gray-100 h-fit">
+            <div className="bg-white p-6 md:p-12 rounded-3xl md:rounded-[3rem] shadow-xl border border-gray-100 h-fit">
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="space-y-6">
                   <h3 className="text-xl font-bold text-gray-900">Detalles de la Estancia</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
                         <Calendar className="h-3 w-3" /> Check-in
@@ -377,7 +377,7 @@ export default function ReservationPage() {
                         onChange={e => setFormData({...formData, name: e.target.value})}
                       />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Email</label>
                         <input

@@ -5,13 +5,13 @@ import {
   Plus, Edit, Trash2, Check, X, TrendingUp, Users, DollarSign, Star,
   Upload, ImagePlus, Facebook, Instagram, Info, Search, Download,
   FileText, Printer, ChevronLeft, ChevronRight, Book, Mail, Phone, MapPin,
-  Rocket, Code2, Target, ArrowRight
+  Rocket, Code2, Target, ArrowRight, Menu
 } from 'lucide-react';
 import { format, addDays, startOfToday, isSameDay, parseISO, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { es } from 'date-fns/locale';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { storage } from '../services/storage';
 import { Room, Reservation, Review, HotelConfig, User as UserType, RoomType, RoomStatus, Invoice, GalleryImage, Complaint } from '../types';
 import { formatCurrency } from '../lib/utils';
@@ -69,7 +69,7 @@ export default function AdminDashboard() {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
         >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Plus className="h-6 w-6 rotate-45" />}
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </header>
 
@@ -142,7 +142,7 @@ function AdminOverview() {
   const rooms = storage.getRooms();
   const reservations = storage.getReservations();
   const reviews = storage.getReviews();
-  const totalIncome = reservations.reduce((sum, r) => r.status !== 'cancelled' ? sum + r.totalPrice : sum, 0);
+  const totalIncome = reservations.reduce((sum, r) => r.status !== 'cancelled' ? sum + Number(r.totalPrice || 0) : sum, 0);
 
   const stats = [
     { name: 'Total Reservas', value: reservations.length, icon: Calendar, color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -1345,9 +1345,15 @@ function AdminReports() {
   const rooms = storage.getRooms();
   
   const monthlyIncome = reservations.reduce((acc: any, res) => {
-    if (res.status === 'cancelled') return acc;
-    const month = format(parseISO(res.checkIn), 'MMM', { locale: es });
-    acc[month] = (acc[month] || 0) + res.totalPrice;
+    if (res.status === 'cancelled' || !res.checkIn) return acc;
+    try {
+      const date = parseISO(res.checkIn);
+      if (isNaN(date.getTime())) return acc;
+      const month = format(date, 'MMM', { locale: es });
+      acc[month] = (acc[month] || 0) + Number(res.totalPrice || 0);
+    } catch (e) {
+      console.error('Invalid date in reservation', res);
+    }
     return acc;
   }, {});
 
@@ -1372,10 +1378,12 @@ function AdminReports() {
     } else {
       const doc = new jsPDF();
       doc.text("Reporte de Gestión Hotelera", 10, 10);
-      (doc as any).autoTable({
+      autoTable(doc, {
         startY: 20,
         head: [['Mes', 'Ingresos']],
-        body: Object.entries(monthlyIncome).map(([m, i]) => [m, formatCurrency(i as number)]),
+        body: Object.keys(monthlyIncome).length > 0 
+          ? Object.entries(monthlyIncome).map(([m, i]) => [m, formatCurrency(i as number)])
+          : [['Sin datos', 'S/ 0.00']],
       });
       doc.save("reporte.pdf");
     }

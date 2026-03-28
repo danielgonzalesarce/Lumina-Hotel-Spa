@@ -34,10 +34,10 @@ export default function SimulatedCheckout() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+      <div className="w-full max-w-4xl bg-white rounded-2xl md:rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
         
         {/* Left Side: Order Summary */}
-        <div className="w-full md:w-5/12 bg-indigo-600 p-8 md:p-12 text-white flex flex-col justify-between">
+        <div className="w-full md:w-5/12 bg-indigo-600 p-6 md:p-12 text-white flex flex-col justify-between">
           <div className="space-y-8">
             <div className="flex items-center gap-2 opacity-80">
               <ArrowLeft className="h-4 w-4 cursor-pointer" onClick={() => navigate(-1)} />
@@ -82,7 +82,7 @@ export default function SimulatedCheckout() {
         </div>
 
         {/* Right Side: Payment Form */}
-        <div className="w-full md:w-7/12 p-8 md:p-12 bg-white relative">
+        <div className="w-full md:w-7/12 p-6 md:p-12 bg-white relative">
           <AnimatePresence mode="wait">
             {isSuccess ? (
               <motion.div 

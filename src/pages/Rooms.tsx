@@ -37,7 +37,7 @@ export default function Rooms() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 space-y-12">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Nuestras Habitaciones</h1>
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-900">Nuestras Habitaciones</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Encuentre el espacio perfecto para su estancia, desde suites ejecutivas hasta habitaciones familiares de lujo.
         </p>
@@ -73,7 +73,7 @@ export default function Rooms() {
       </div>
 
       {/* List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredRooms.map((room) => (
           <motion.div
             key={room.id}

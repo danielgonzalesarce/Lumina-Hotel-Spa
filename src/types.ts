@@ -57,6 +57,8 @@ export interface Reservation {
   guests: number;
   totalPrice: number;
   status: 'pending' | 'confirmed' | 'cancelled' | 'pending_payment';
+  depositPaid?: number;
+  remainingBalance?: number;
   extras: {
     breakfast: boolean;
     shuttle: boolean;

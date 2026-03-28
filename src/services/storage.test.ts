@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { storage } from './storage';
-import { RoomStatus } from '../types';
+import { RoomStatus, RoomType } from '../types';
 
 describe('storage service', () => {
   beforeEach(() => {
@@ -21,7 +21,7 @@ describe('storage service', () => {
         id: 'test-room-1',
         number: '101',
         name: 'Test Room',
-        type: 'Standard',
+        type: RoomType.Standard,
         price: 100,
         capacity: 2,
         status: RoomStatus.Available,
@@ -57,7 +57,7 @@ describe('storage service', () => {
         id: 'room-to-delete',
         number: '999',
         name: 'Temporary Room',
-        type: 'Standard',
+        type: RoomType.Standard,
         price: 50,
         capacity: 1,
         status: RoomStatus.Available,
@@ -84,6 +84,7 @@ describe('storage service', () => {
         id: 'user-1',
         name: 'John Doe',
         email: 'john@example.com',
+        phone: '123456789',
         role: 'user' as const,
         createdAt: new Date().toISOString()
       };

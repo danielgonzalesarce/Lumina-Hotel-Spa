@@ -28,53 +28,68 @@ export default function UserDashboard() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col md:flex-row gap-12">
-      {/* Sidebar */}
-      <aside className="w-full md:w-64 space-y-8">
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="h-12 w-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
-              {user.name.charAt(0)}
-            </div>
-            <div>
-              <div className="font-bold text-gray-900">{user.name}</div>
-              <div className="text-xs text-gray-500">Huésped Lumina</div>
-            </div>
-          </div>
-          <nav className="space-y-2">
-            {sidebarLinks.map(link => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                  location.pathname === link.path 
-                  ? 'bg-indigo-50 text-indigo-600' 
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-              >
-                <link.icon className="h-5 w-5" />
-                {link.name}
-              </Link>
-            ))}
-            <button
-              onClick={() => { storage.setCurrentUser(null); navigate('/'); }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-all"
-            >
-              <LogOut className="h-5 w-5" /> Cerrar Sesión
-            </button>
-          </nav>
+    <>
+      <div className="lg:hidden min-h-[60vh] flex flex-col items-center justify-center p-6 text-center bg-white">
+        <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-6">
+          <User className="h-10 w-10" />
         </div>
-      </aside>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Acceso Restringido</h2>
+        <p className="text-gray-600 mb-8 max-w-md">
+          El panel de usuario solo está disponible en computadoras de escritorio. Por favor, acceda desde una pantalla más grande para gestionar sus reservas.
+        </p>
+        <button onClick={() => navigate('/')} className="btn-primary">
+          Volver al Inicio
+        </button>
+      </div>
 
-      {/* Content */}
-      <main className="flex-grow">
-        <Routes>
-          <Route index element={<UserOverview user={user} />} />
-          <Route path="mis-reservas" element={<UserReservations user={user} />} />
-          <Route path="perfil" element={<UserProfile user={user} />} />
-        </Routes>
-      </main>
-    </div>
+      <div className="hidden lg:flex max-w-7xl mx-auto px-4 py-12 flex-col md:flex-row gap-12">
+        {/* Sidebar */}
+        <aside className="w-full md:w-64 space-y-8">
+          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="h-12 w-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
+                {user.name.charAt(0)}
+              </div>
+              <div>
+                <div className="font-bold text-gray-900">{user.name}</div>
+                <div className="text-xs text-gray-500">Huésped Lumina</div>
+              </div>
+            </div>
+            <nav className="space-y-2">
+              {sidebarLinks.map(link => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                    location.pathname === link.path 
+                    ? 'bg-indigo-50 text-indigo-600' 
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  <link.icon className="h-5 w-5" />
+                  {link.name}
+                </Link>
+              ))}
+              <button
+                onClick={() => { storage.setCurrentUser(null); navigate('/'); }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-all"
+              >
+                <LogOut className="h-5 w-5" /> Cerrar Sesión
+              </button>
+            </nav>
+          </div>
+        </aside>
+
+        {/* Content */}
+        <main className="flex-grow">
+          <Routes>
+            <Route index element={<UserOverview user={user} />} />
+            <Route path="mis-reservas" element={<UserReservations user={user} />} />
+            <Route path="perfil" element={<UserProfile user={user} />} />
+          </Routes>
+        </main>
+      </div>
+    </>
   );
 }
 

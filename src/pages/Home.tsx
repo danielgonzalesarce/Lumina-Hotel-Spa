@@ -49,7 +49,7 @@ export default function Home() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-bold mb-6"
+            className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6"
           >
             Bienvenido a Lumina Hotel
           </motion.h1>
@@ -84,9 +84,9 @@ export default function Home() {
       </section>
 
       {/* Search Bar */}
-      <section className="max-w-7xl mx-auto px-4 -mt-16 relative z-20">
+      <section className="max-w-7xl mx-auto px-4 -mt-12 md:-mt-16 relative z-20">
         <div className="bg-white rounded-xl shadow-xl p-6 md:p-8">
-          <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+          <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-indigo-600" /> Check-in
@@ -195,7 +195,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-gray-900">Nuestros Servicios</h2>
             <p className="text-gray-600 mt-2">Todo lo que necesita para una estancia perfecta.</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
             {services.map((service, i) => (
               <div key={i} className="text-center">
                 <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-sm text-indigo-600">
@@ -211,7 +211,7 @@ export default function Home() {
       {/* Gallery */}
       <section className="max-w-7xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">Galería</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {gallery.slice(0, 8).map((img) => (
             <div key={img.id} className="relative overflow-hidden rounded-xl aspect-square">
               <img src={img.url} alt={img.title} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
@@ -243,7 +243,7 @@ export default function Home() {
 
       {/* Location */}
       <section className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Ubicación Privilegiada</h2>
             <p className="text-gray-600 mb-8">
@@ -294,9 +294,9 @@ export default function Home() {
 
       {/* CTA */}
       <section className="max-w-5xl mx-auto px-4">
-        <div className="bg-indigo-600 rounded-3xl p-12 text-center text-white shadow-xl">
-          <h2 className="text-4xl font-bold mb-6">¿Listo para su estancia?</h2>
-          <p className="text-xl mb-10 text-indigo-100">Reserve directamente con nosotros y obtenga los mejores beneficios.</p>
+        <div className="bg-indigo-600 rounded-3xl p-8 md:p-12 text-center text-white shadow-xl">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">¿Listo para su estancia?</h2>
+          <p className="text-lg md:text-xl mb-10 text-indigo-100">Reserve directamente con nosotros y obtenga los mejores beneficios.</p>
           <Link
             to="/reserva"
             className="inline-block px-12 py-4 bg-white text-indigo-600 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-lg"
