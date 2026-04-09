@@ -4,9 +4,11 @@ import { Calendar, Users, ArrowRight, Wifi, Waves, Utensils, Sprout, Car, Wind, 
 import { motion } from 'motion/react';
 import { storage } from '../services/storage';
 import { formatCurrency } from '../lib/utils';
+import { useTenant } from '../TenantContext';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { currentTenant } = useTenant();
   const rooms = storage.getRooms().filter(r => r.featured);
   const reviews = storage.getReviews().filter(r => r.approved);
   const gallery = storage.getGallery();
@@ -37,9 +39,9 @@ export default function Home() {
       <section className="relative h-[80vh] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2000"
+            src={currentTenant?.theme?.coverUrl || "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2000"}
             alt="Hotel Hero"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-all duration-1000"
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-black/40" />
@@ -51,7 +53,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6"
           >
-            Bienvenido a Lumina Hotel
+            Bienvenido a {currentTenant?.name || 'Lumina Hotel'}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -69,7 +71,7 @@ export default function Home() {
           >
             <Link
               to="/reserva"
-              className="btn-primary w-full sm:w-auto text-center"
+              className="w-full sm:w-auto text-center px-6 py-3 text-white rounded-lg font-semibold transition-all shadow-sm active:scale-95 bg-[var(--color-primary)] hover:opacity-90"
             >
               Reservar Ahora
             </Link>
@@ -89,7 +91,7 @@ export default function Home() {
           <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-indigo-600" /> Check-in
+                <Calendar className="h-4 w-4 text-[var(--color-primary)]" /> Check-in
               </label>
               <input
                 type="date"
@@ -101,7 +103,7 @@ export default function Home() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-indigo-600" /> Check-out
+                <Calendar className="h-4 w-4 text-[var(--color-primary)]" /> Check-out
               </label>
               <input
                 type="date"
@@ -113,7 +115,7 @@ export default function Home() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Users className="h-4 w-4 text-indigo-600" /> Huéspedes
+                <Users className="h-4 w-4 text-[var(--color-primary)]" /> Huéspedes
               </label>
               <select
                 className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -157,7 +159,7 @@ export default function Home() {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute top-4 right-4 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                <div className="absolute top-4 right-4 bg-[var(--color-primary)] text-white px-3 py-1 rounded-full text-sm font-bold">
                   {formatCurrency(room.price)}
                 </div>
               </div>
@@ -177,7 +179,7 @@ export default function Home() {
                   </Link>
                   <Link
                     to={`/reserva?roomId=${room.id}`}
-                    className="flex-1 text-center py-2 px-4 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors"
+                    className="flex-1 text-center py-2 px-4 bg-[var(--color-primary)] text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-colors"
                   >
                     Reservar
                   </Link>
@@ -198,7 +200,7 @@ export default function Home() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
             {services.map((service, i) => (
               <div key={i} className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-sm text-indigo-600">
+                <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-sm text-[var(--color-primary)]">
                   <service.icon className="h-8 w-8" />
                 </div>
                 <span className="text-sm font-semibold text-gray-700">{service.name}</span>
@@ -251,11 +253,11 @@ export default function Home() {
             </p>
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-gray-700">
-                <MapPin className="h-5 w-5 text-indigo-600" />
+                <MapPin className="h-5 w-5 text-[var(--color-primary)]" />
                 <span>Av. Lujo 123, San Isidro, Lima, Perú</span>
               </div>
               <div className="flex items-center gap-3 text-gray-700">
-                <Navigation className="h-5 w-5 text-indigo-600" />
+                <Navigation className="h-5 w-5 text-[var(--color-primary)]" />
                 <span>A 15 min del Aeropuerto</span>
               </div>
             </div>
@@ -294,12 +296,12 @@ export default function Home() {
 
       {/* CTA */}
       <section className="max-w-5xl mx-auto px-4">
-        <div className="bg-indigo-600 rounded-3xl p-8 md:p-12 text-center text-white shadow-xl">
+        <div className="bg-[var(--color-primary)] rounded-3xl p-8 md:p-12 text-center text-white shadow-xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">¿Listo para su estancia?</h2>
           <p className="text-lg md:text-xl mb-10 text-indigo-100">Reserve directamente con nosotros y obtenga los mejores beneficios.</p>
           <Link
             to="/reserva"
-            className="inline-block px-12 py-4 bg-white text-indigo-600 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-lg"
+            className="inline-block px-12 py-4 bg-white text-[var(--color-primary)] rounded-full font-bold text-lg transition-all hover:scale-105 shadow-lg"
           >
             Reservar Ahora
           </Link>

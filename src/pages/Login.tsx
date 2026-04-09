@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, LogIn, Hotel, AlertCircle, UserPlus, User, Phone, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, Lock, LogIn, Hotel, AlertCircle, UserPlus, User, Phone, ArrowRight, Loader2, Building } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { storage } from '../services/storage';
 import { User as UserType } from '../types';
+import { useTenant } from '../TenantContext';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { currentTenant, availableTenants, setCurrentTenant } = useTenant();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,9 +33,9 @@ export default function Login() {
       const user = users.find(u => u.email === email && u.password === password);
       if (user) {
         storage.setCurrentUser(user);
-        navigate(user.role === 'admin' ? '/admin' : '/user');
+        navigate(user.role === 'super_admin' ? '/superadmin' : user.role === 'admin' ? '/admin' : '/user');
       } else {
-        setError('Credenciales incorrectas. Intente con admin@hotel.com / admin');
+        setError('Credenciales incorrectas. Intente con superadmin@empresa.com / super o admin@hotel.com / admin');
         setIsLoading(false);
       }
     } else {
@@ -68,9 +70,9 @@ export default function Login() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2000" 
+          src={currentTenant?.theme?.coverUrl || "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2000"} 
           alt="Luxury Hotel" 
-          className="w-full h-full object-cover scale-110 blur-[2px]"
+          className="w-full h-full object-cover scale-110 blur-[2px] transition-all duration-1000"
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
@@ -83,14 +85,17 @@ export default function Login() {
         className="relative z-10 max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 bg-white/10 backdrop-blur-xl rounded-[3rem] overflow-hidden border border-white/20 shadow-2xl"
       >
         {/* Left Side: Info (Visible on Desktop) */}
-        <div className="hidden lg:flex flex-col justify-between p-16 text-white bg-indigo-600/20">
+        <div 
+          className="hidden lg:flex flex-col justify-between p-16 text-white transition-colors duration-500"
+          style={{ backgroundColor: currentTenant?.theme?.primaryColor ? `${currentTenant.theme.primaryColor}33` : 'rgba(79, 70, 229, 0.2)' }} // 33 is hex for 20% opacity
+        >
           <div>
             <div className="inline-flex p-4 bg-white/10 rounded-3xl mb-8">
               <Hotel className="h-10 w-10" />
             </div>
-            <h2 className="text-5xl font-bold mb-6 leading-tight">Experiencias Inolvidables</h2>
-            <p className="text-xl text-indigo-100 font-light leading-relaxed">
-              Únase a nuestra comunidad exclusiva y disfrute de los mejores beneficios en Lumina Hotel & Spa.
+            <h2 className="text-5xl font-bold mb-6 leading-tight">{currentTenant?.name || 'Experiencias Inolvidables'}</h2>
+            <p className="text-xl text-white/80 font-light leading-relaxed">
+              Únase a nuestra comunidad exclusiva y disfrute de los mejores beneficios en {currentTenant?.name || 'nuestro hotel'}.
             </p>
           </div>
           
@@ -99,8 +104,8 @@ export default function Login() {
               <div className="h-1 w-12 bg-white rounded-full" />
               <span className="text-sm font-bold uppercase tracking-widest">Lujo & Confort</span>
             </div>
-            <p className="text-sm text-indigo-200">
-              © 2026 Lumina Hotel & Spa. Todos los derechos reservados.
+            <p className="text-sm text-white/60">
+              © 2026 {currentTenant?.name || 'Hotel'}. Todos los derechos reservados.
             </p>
           </div>
         </div>
@@ -216,7 +221,8 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-2xl font-bold text-lg transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-3 group"
+                  style={{ backgroundColor: currentTenant?.theme?.primaryColor || '#4f46e5' }}
+                  className="w-full py-5 text-white rounded-2xl font-bold text-lg transition-all shadow-xl flex items-center justify-center gap-3 group opacity-90 hover:opacity-100 disabled:opacity-50"
                 >
                   {isLoading ? (
                     <>
@@ -237,18 +243,50 @@ export default function Login() {
               <div className="text-center space-y-6">
                 <button 
                   onClick={() => setIsLogin(!isLogin)}
-                  className="text-sm text-gray-500 hover:text-indigo-600 transition-colors"
+                  className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
                 >
                   {isLogin 
-                    ? <>¿No tiene una cuenta? <span className="text-indigo-600 font-bold hover:underline">Regístrese aquí</span></>
-                    : <>¿Ya tiene una cuenta? <span className="text-indigo-600 font-bold hover:underline">Inicie sesión</span></>
+                    ? <>¿No tiene una cuenta? <span style={{ color: currentTenant?.theme?.primaryColor || '#4f46e5' }} className="font-bold hover:underline">Regístrese aquí</span></>
+                    : <>¿Ya tiene una cuenta? <span style={{ color: currentTenant?.theme?.primaryColor || '#4f46e5' }} className="font-bold hover:underline">Inicie sesión</span></>
                   }
                 </button>
 
+                {/* Tenant Selector (Simulación de Subdominios) */}
+                <div className="pt-6 border-t border-gray-100">
+                  <div className="flex items-center justify-center gap-2 mb-4 text-gray-400">
+                    <Building className="h-4 w-4" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Seleccionar Hotel (Simula Subdominio)</span>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {availableTenants.map(tenant => (
+                      <button
+                        key={tenant.id}
+                        type="button"
+                        onClick={() => setCurrentTenant(tenant)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          currentTenant?.id === tenant.id 
+                            ? 'text-white shadow-md' 
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                        style={currentTenant?.id === tenant.id ? { backgroundColor: tenant.theme?.primaryColor || '#4f46e5' } : {}}
+                      >
+                        {tenant.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {isLogin && (
-                  <div className="pt-8 border-t border-gray-100">
+                  <div className="pt-6 border-t border-gray-100">
                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-4">Acceso Rápido (Demo)</p>
                     <div className="flex gap-2">
+                      <button 
+                        onClick={() => { setEmail('superadmin@empresa.com'); setPassword('super'); }}
+                        className="flex-1 bg-gray-50 hover:bg-gray-100 p-3 rounded-xl text-[10px] text-left transition-colors"
+                      >
+                        <div className="font-bold text-gray-600">Super Admin</div>
+                        <div className="text-gray-400 truncate">superadmin@empresa.com</div>
+                      </button>
                       <button 
                         onClick={() => { setEmail('admin@hotel.com'); setPassword('admin'); }}
                         className="flex-1 bg-gray-50 hover:bg-gray-100 p-3 rounded-xl text-[10px] text-left transition-colors"

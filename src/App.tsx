@@ -13,14 +13,17 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import Complaints from './pages/Complaints';
 import Legal from './pages/Legal';
 import ProjectInfo from './pages/ProjectInfo';
 import SimulatedCheckout from './pages/SimulatedCheckout';
 
+import { TenantProvider } from './TenantContext';
+
 function AppContent() {
   const location = useLocation();
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith('/admin') || location.pathname.startsWith('/superadmin');
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -36,6 +39,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/user/*" element={<UserDashboard />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route path="/superadmin/*" element={<SuperAdminDashboard />} />
           <Route path="/reclamaciones" element={<Complaints />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="/sustentacion" element={<ProjectInfo />} />
@@ -51,8 +55,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <TenantProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </TenantProvider>
   );
 }

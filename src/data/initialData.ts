@@ -1,9 +1,10 @@
-import { Room, RoomType, Review, User, HotelConfig, RoomStatus, GalleryImage } from '../types';
+import { Room, RoomType, Review, User, HotelConfig, RoomStatus, GalleryImage, Tenant } from '../types';
 
 export const INITIAL_ROOMS: Room[] = [
   {
     id: '1',
     number: '101',
+    floor: '1',
     name: 'Habitación Estándar',
     type: RoomType.Standard,
     description: 'Una acogedora habitación perfecta para viajeros individuales o parejas. Equipada con todas las comodidades esenciales para una estancia confortable.',
@@ -20,6 +21,7 @@ export const INITIAL_ROOMS: Room[] = [
   {
     id: '2',
     number: '102',
+    floor: '1',
     name: 'Habitación Doble',
     type: RoomType.Double,
     description: 'Espaciosa habitación con dos camas matrimoniales, ideal para familias pequeñas o amigos que viajan juntos.',
@@ -36,6 +38,7 @@ export const INITIAL_ROOMS: Room[] = [
   {
     id: '3',
     number: '201',
+    floor: '2',
     name: 'Suite Ejecutiva',
     type: RoomType.Suite,
     description: 'Elegancia y confort superior. Cuenta con sala de estar independiente y vistas panorámicas a la ciudad.',
@@ -52,6 +55,7 @@ export const INITIAL_ROOMS: Room[] = [
   {
     id: '4',
     number: '301',
+    floor: '3',
     name: 'Suite Premium Lumina',
     type: RoomType.PremiumSuite,
     description: 'La máxima expresión del lujo. Dos dormitorios, cocina equipada, terraza privada y servicio de mayordomo.',
@@ -104,6 +108,7 @@ export const INITIAL_ROOMS: Room[] = [
     return {
       id,
       number: roomNum,
+      floor: floor.toString(),
       name: `${name} ${roomNum}`,
       type,
       description: `Una excelente opción de ${name.toLowerCase()} en el piso ${floor}.`,
@@ -212,6 +217,14 @@ export const INITIAL_REVIEWS: Review[] = [
 
 export const INITIAL_USERS: User[] = [
   {
+    id: 'superadmin',
+    name: 'Super Admin',
+    email: 'superadmin@empresa.com',
+    phone: '999888777',
+    role: 'super_admin',
+    password: 'super'
+  },
+  {
     id: 'admin',
     name: 'Administrador',
     email: 'admin@hotel.com',
@@ -244,4 +257,55 @@ export const INITIAL_GALLERY: GalleryImage[] = [
   { id: '4', url: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=800', title: 'Spa & Relax' },
   { id: '5', url: 'https://images.unsplash.com/photo-1551882547-ff43c63fe78d?auto=format&fit=crop&q=80&w=800', title: 'Restaurante Gourmet' },
   { id: '6', url: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=800', title: 'Suite Panorámica' },
+];
+
+export const INITIAL_TENANTS: Tenant[] = [
+  {
+    id: '1',
+    name: 'Lumina Hotel & Spa',
+    contactName: 'Juan Pérez',
+    email: 'admin@hotel.com',
+    phone: '999888777',
+    plan: 'Pro',
+    status: 'Activo',
+    createdAt: new Date().toISOString(),
+    nextBillingDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+    monthlyFee: 199.99,
+    theme: {
+      primaryColor: '#4f46e5', // Indigo
+      coverUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2000'
+    }
+  },
+  {
+    id: '2',
+    name: 'Resort Paraíso',
+    contactName: 'María García',
+    email: 'contacto@resortparaiso.com',
+    phone: '987654321',
+    plan: 'Enterprise',
+    status: 'Activo',
+    createdAt: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(),
+    nextBillingDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+    monthlyFee: 499.99,
+    theme: {
+      primaryColor: '#059669', // Emerald
+      coverUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=2000'
+    }
+  },
+  {
+    id: '3',
+    name: 'Hostal El Sol',
+    contactName: 'Carlos López',
+    email: 'info@hostalelsol.com',
+    phone: '912345678',
+    plan: 'Básico',
+    status: 'Activo',
+    createdAt: new Date(new Date().setMonth(new Date().getMonth() - 5)).toISOString(),
+    nextBillingDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+    monthlyFee: 49.99,
+    theme: {
+      primaryColor: '#d97706', // Amber
+      coverUrl: 'https://images.unsplash.com/photo-1551882547-ff43c63fe78d?auto=format&fit=crop&q=80&w=2000'
+    }
+  }
 ];

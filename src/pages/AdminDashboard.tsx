@@ -65,12 +65,20 @@ export default function AdminDashboard() {
           <Bed className="h-6 w-6" />
           <span>Admin Lumina</span>
         </div>
-        <button 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
-        >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => { storage.setCurrentUser(null); navigate('/'); }}
+            className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+          >
+            <LogOut className="h-6 w-6" />
+          </button>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </header>
 
       {/* Mobile Sidebar Overlay */}
@@ -83,7 +91,7 @@ export default function AdminDashboard() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 lg:fixed lg:h-screen
+        fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 lg:fixed lg:h-screen overflow-y-auto
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="p-8">
@@ -281,6 +289,10 @@ function AdminRooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [editingRoom, setEditingRoom] = useState<Partial<Room> | null>(null);
   const [customAmenity, setCustomAmenity] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [floorFilter, setFloorFilter] = useState('Todos');
+  const [currentPage, setCurrentPage] = useState(1);
+  const roomsPerPage = 5;
 
   const COMMON_AMENITIES = [
     'WiFi', 'Aire Acondicionado', 'TV Cable', 'Caja Fuerte', 'Minibar', 
@@ -292,6 +304,15 @@ function AdminRooms() {
   useEffect(() => {
     setRooms(storage.getRooms());
   }, []);
+
+  const filteredRooms = rooms.filter(room => 
+    (room.number.includes(searchTerm) || room.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (floorFilter === 'Todos' || room.floor === floorFilter)
+  );
+
+  const totalPages = Math.ceil(filteredRooms.length / roomsPerPage);
+  const paginatedRooms = filteredRooms.slice((currentPage - 1) * roomsPerPage, currentPage * roomsPerPage);
+  const floors = ['Todos', ...Array.from(new Set(rooms.map(r => r.floor)))];
 
   const handleDelete = (id: string) => {
     if (confirm('¿Eliminar esta habitación?')) {
@@ -347,6 +368,7 @@ function AdminRooms() {
     const roomToSave: Room = {
       id: editingRoom.id || Math.random().toString(36).substr(2, 9),
       number: editingRoom.number || '',
+      floor: editingRoom.floor || '1',
       name: editingRoom.name || '',
       type: editingRoom.type || RoomType.Standard,
       description: editingRoom.description || '',
@@ -375,6 +397,23 @@ function AdminRooms() {
         </button>
       </div>
 
+      <div className="flex gap-4">
+        <input 
+          type="text" 
+          placeholder="Buscar habitación..." 
+          className="p-3 bg-white border border-gray-200 rounded-xl flex-grow"
+          value={searchTerm}
+          onChange={e => {setSearchTerm(e.target.value); setCurrentPage(1);}}
+        />
+        <select 
+          value={floorFilter} 
+          onChange={e => {setFloorFilter(e.target.value); setCurrentPage(1);}}
+          className="p-3 bg-white border border-gray-200 rounded-xl"
+        >
+          {floors.map(f => <option key={f} value={f}>{f}</option>)}
+        </select>
+      </div>
+
       {editingRoom && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <form onSubmit={handleSave} className="bg-white w-full max-w-3xl p-8 md:p-10 rounded-[2.5rem] shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
@@ -394,6 +433,16 @@ function AdminRooms() {
                   className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
                   value={editingRoom.number || ''}
                   onChange={e => setEditingRoom({...editingRoom, number: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">Piso</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                  value={editingRoom.floor || ''}
+                  onChange={e => setEditingRoom({...editingRoom, floor: e.target.value})}
                 />
               </div>
               <div className="space-y-2">
@@ -547,6 +596,7 @@ function AdminRooms() {
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr>
               <th className="px-8 py-4 font-semibold text-sm text-gray-500">N°</th>
+              <th className="px-8 py-4 font-semibold text-sm text-gray-500">Piso</th>
               <th className="px-8 py-4 font-semibold text-sm text-gray-500">Nombre</th>
               <th className="px-8 py-4 font-semibold text-sm text-gray-500">Precio</th>
               <th className="px-8 py-4 font-semibold text-sm text-gray-500">Estado</th>
@@ -554,9 +604,10 @@ function AdminRooms() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {rooms.map(room => (
+            {paginatedRooms.map(room => (
               <tr key={room.id}>
                 <td className="px-8 py-4 font-bold text-gray-900">{room.number}</td>
+                <td className="px-8 py-4 font-medium text-gray-700">{room.floor}</td>
                 <td className="px-8 py-4">
                   <div className="flex items-center gap-3">
                     <img src={room.images[0]} className="h-10 w-12 object-cover rounded-lg" />
@@ -584,6 +635,18 @@ function AdminRooms() {
           </tbody>
         </table>
       </div>
+
+      <div className="flex justify-center gap-2 mt-6">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-4 py-2 rounded-lg font-bold ${currentPage === page ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200'}`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -593,7 +656,12 @@ function AdminCalendar() {
   const [reservations, setReservations] = useState<Reservation[]>(storage.getReservations());
   const [startDate, setStartDate] = useState(startOfToday());
   const [selectedRes, setSelectedRes] = useState<Reservation | null>(null);
+  const [newRes, setNewRes] = useState<{roomId: string, date: Date} | null>(null);
+  const [roomTypeFilter, setRoomTypeFilter] = useState<string>('Todos');
   const daysToShow = 14;
+
+  const roomTypes = ['Todos', ...Array.from(new Set(rooms.map(r => r.type)))];
+  const filteredRooms = rooms.filter(r => roomTypeFilter === 'Todos' || r.type === roomTypeFilter);
 
   const days = Array.from({ length: daysToShow }, (_, i) => addDays(startDate, i));
 
@@ -605,9 +673,9 @@ function AdminCalendar() {
       (parseISO(r.checkIn) <= date && parseISO(r.checkOut) > date))
     );
 
-    if (!res) return { status: 'Disponible', color: 'bg-green-100 text-green-700' };
-    if (res.status === 'confirmed') return { status: 'Ocupada', color: 'bg-red-100 text-red-700', res };
-    return { status: 'Reservada', color: 'bg-yellow-100 text-yellow-700', res };
+    if (!res) return { status: 'Disponible', color: 'bg-gray-50 hover:bg-gray-100', icon: null };
+    if (res.status === 'confirmed') return { status: 'Ocupada', color: 'bg-indigo-500 hover:bg-indigo-600', icon: '🔒', res };
+    return { status: 'Reservada', color: 'bg-amber-400 hover:bg-amber-500', icon: '⏳', res };
   };
 
   const handleUpdateRes = (res: Reservation) => {
@@ -629,6 +697,13 @@ function AdminCalendar() {
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-gray-900">Calendario de Ocupación</h2>
         <div className="flex items-center gap-4 bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
+          <select 
+            value={roomTypeFilter} 
+            onChange={e => setRoomTypeFilter(e.target.value)}
+            className="p-2 bg-transparent text-sm font-bold outline-none"
+          >
+            {roomTypes.map(type => <option key={type} value={type}>{type}</option>)}
+          </select>
           <button onClick={() => setStartDate(addDays(startDate, -7))} className="p-2 hover:bg-gray-50 rounded-xl"><ChevronLeft className="h-5 w-5" /></button>
           <span className="font-bold text-sm px-4">{format(startDate, 'MMM d', { locale: es })} - {format(addDays(startDate, daysToShow - 1), 'MMM d, yyyy', { locale: es })}</span>
           <button onClick={() => setStartDate(addDays(startDate, 7))} className="p-2 hover:bg-gray-50 rounded-xl"><ChevronRight className="h-5 w-5" /></button>
@@ -650,7 +725,7 @@ function AdminCalendar() {
               </tr>
             </thead>
             <tbody>
-              {rooms.map(room => (
+              {filteredRooms.map(room => (
                 <tr key={room.id} className="group hover:bg-gray-50/50 transition-colors">
                   <td className="sticky left-0 z-10 bg-white group-hover:bg-gray-50 p-6 border-r border-b border-gray-100 font-bold text-gray-900">
                     <div className="flex flex-col">
@@ -663,10 +738,10 @@ function AdminCalendar() {
                     return (
                       <td key={day.toISOString()} className="p-2 border-b border-gray-100">
                         <div 
-                          onClick={() => info.res && setSelectedRes(info.res)}
-                          className={`h-12 rounded-xl flex items-center justify-center text-[10px] font-black uppercase tracking-tighter transition-all cursor-pointer hover:scale-105 ${info.color}`}
+                          onClick={() => info.res ? setSelectedRes(info.res) : setNewRes({roomId: room.id, date: day})}
+                          className={`h-12 w-full rounded-xl flex items-center justify-center transition-all cursor-pointer hover:scale-105 ${info.color}`}
                         >
-                          {info.status}
+                          {info.icon && <span className="text-white text-lg">{info.icon}</span>}
                         </div>
                       </td>
                     );
@@ -687,17 +762,30 @@ function AdminCalendar() {
         />
       )}
 
+      {newRes && (
+        <NewReservationModal 
+          roomId={newRes.roomId}
+          date={newRes.date}
+          onClose={() => setNewRes(null)}
+          onSave={(res) => {
+            storage.saveReservation(res);
+            setReservations(storage.getReservations());
+            setNewRes(null);
+          }}
+        />
+      )}
+
       <div className="flex gap-6 justify-center">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-green-100 rounded-full border border-green-200"></div>
+          <div className="w-4 h-4 bg-gray-50 rounded-lg border border-gray-200"></div>
           <span className="text-xs font-bold text-gray-500">Disponible</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-yellow-100 rounded-full border border-yellow-200"></div>
+          <div className="w-4 h-4 bg-amber-400 rounded-lg flex items-center justify-center text-[10px]">⏳</div>
           <span className="text-xs font-bold text-gray-500">Reservada</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-red-100 rounded-full border border-red-200"></div>
+          <div className="w-4 h-4 bg-indigo-500 rounded-lg flex items-center justify-center text-[10px]">🔒</div>
           <span className="text-xs font-bold text-gray-500">Ocupada</span>
         </div>
       </div>
@@ -778,6 +866,63 @@ function ReservationModal({ reservation, onClose, onSave, onDelete }: {
           <button onClick={() => onSave(edited)} className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100">Guardar Cambios</button>
           <button onClick={() => onDelete(edited.id)} className="p-4 bg-red-50 text-red-600 rounded-2xl hover:bg-red-100 transition-all"><Trash2 className="h-6 w-6" /></button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function NewReservationModal({ roomId, date, onClose, onSave }: {
+  roomId: string;
+  date: Date;
+  onClose: () => void;
+  onSave: (res: Reservation) => void;
+}) {
+  const [userName, setUserName] = useState('');
+  const [checkOut, setCheckOut] = useState(format(addDays(date, 1), 'yyyy-MM-dd'));
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-lg p-8 rounded-[2.5rem] shadow-2xl space-y-6">
+        <div className="flex justify-between items-center">
+          <h3 className="text-2xl font-bold">Nueva Reserva</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full"><X className="h-6 w-6 text-gray-400" /></button>
+        </div>
+        <div className="space-y-4">
+          <input 
+            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl font-bold"
+            placeholder="Nombre del Cliente"
+            value={userName}
+            onChange={e => setUserName(e.target.value)}
+          />
+          <input 
+            type="date"
+            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl font-bold"
+            value={format(date, 'yyyy-MM-dd')}
+            disabled
+          />
+          <input 
+            type="date"
+            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl font-bold"
+            value={checkOut}
+            onChange={e => setCheckOut(e.target.value)}
+          />
+        </div>
+        <button onClick={() => onSave({
+            id: Math.random().toString(36).substr(2, 9),
+            roomId,
+            roomName: storage.getRooms().find(r => r.id === roomId)?.name || '',
+            userId: 'guest',
+            userName,
+            userEmail: 'guest@example.com',
+            userPhone: '000000000',
+            checkIn: format(date, 'yyyy-MM-dd'),
+            checkOut,
+            guests: 1,
+            totalPrice: 100, // Placeholder
+            status: 'confirmed',
+            extras: { breakfast: false, shuttle: false, extraBed: false },
+            createdAt: new Date().toISOString()
+        })} className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100">Crear Reserva</button>
       </div>
     </div>
   );

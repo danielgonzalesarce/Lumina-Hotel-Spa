@@ -1,5 +1,5 @@
-import { Room, Reservation, Review, User, HotelConfig, Invoice, RoomStatus, GalleryImage, Complaint } from '../types';
-import { INITIAL_ROOMS, INITIAL_REVIEWS, INITIAL_USERS, INITIAL_CONFIG, INITIAL_GALLERY } from '../data/initialData';
+import { Room, Reservation, Review, User, HotelConfig, Invoice, RoomStatus, GalleryImage, Complaint, Tenant, TenantInvoice, GlobalConfig } from '../types';
+import { INITIAL_ROOMS, INITIAL_REVIEWS, INITIAL_USERS, INITIAL_CONFIG, INITIAL_GALLERY, INITIAL_TENANTS } from '../data/initialData';
 
 const KEYS = {
   ROOMS: 'hotel_rooms',
@@ -10,7 +10,22 @@ const KEYS = {
   CURRENT_USER: 'hotel_current_user',
   INVOICES: 'hotel_invoices',
   GALLERY: 'hotel_gallery',
-  COMPLAINTS: 'hotel_complaints'
+  COMPLAINTS: 'hotel_complaints',
+  TENANTS: 'hotel_tenants',
+  TENANT_INVOICES: 'hotel_tenant_invoices',
+  GLOBAL_CONFIG: 'hotel_global_config'
+};
+
+const INITIAL_GLOBAL_CONFIG: GlobalConfig = {
+  platformName: 'Lumina SaaS',
+  supportEmail: 'soporte@lumina.com',
+  supportPhone: '+1234567890',
+  defaultCurrency: 'PEN',
+  plans: {
+    basic: { price: 99, maxRooms: 10, maxUsers: 2 },
+    pro: { price: 199, maxRooms: 50, maxUsers: 10 },
+    enterprise: { price: 499, maxRooms: 999, maxUsers: 999 }
+  }
 };
 
 export const storage = {
@@ -23,7 +38,12 @@ export const storage = {
       rooms = INITIAL_ROOMS;
       localStorage.setItem(KEYS.ROOMS, JSON.stringify(rooms));
     } else {
-      rooms = JSON.parse(data);
+      try {
+        rooms = JSON.parse(data);
+      } catch (e) {
+        console.error("Error parsing rooms", e);
+        rooms = INITIAL_ROOMS;
+      }
       // Sincronización automática: si faltan habitaciones de INITIAL_ROOMS, las agregamos
       const existingIds = new Set(rooms.map((r: any) => r.id));
       const missingRooms = INITIAL_ROOMS.filter(r => !existingIds.has(r.id));
@@ -67,7 +87,12 @@ export const storage = {
   // Reservations
   getReservations: (): Reservation[] => {
     const data = localStorage.getItem(KEYS.RESERVATIONS);
-    return data ? JSON.parse(data) : [];
+    try {
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error("Error parsing reservations", e);
+      return [];
+    }
   },
   saveReservation: (res: Reservation) => {
     const reservations = storage.getReservations();
@@ -95,7 +120,12 @@ export const storage = {
   // Invoices
   getInvoices: (): Invoice[] => {
     const data = localStorage.getItem(KEYS.INVOICES);
-    return data ? JSON.parse(data) : [];
+    try {
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error("Error parsing invoices", e);
+      return [];
+    }
   },
   saveInvoice: (invoice: Invoice) => {
     const invoices = storage.getInvoices();
@@ -112,7 +142,12 @@ export const storage = {
       reviews = INITIAL_REVIEWS;
       localStorage.setItem(KEYS.REVIEWS, JSON.stringify(reviews));
     } else {
-      reviews = JSON.parse(data);
+      try {
+        reviews = JSON.parse(data);
+      } catch (e) {
+        console.error("Error parsing reviews", e);
+        reviews = INITIAL_REVIEWS;
+      }
       // Sincronización automática: si faltan reseñas de INITIAL_REVIEWS, las agregamos
       const existingIds = new Set(reviews.map((r: any) => r.id));
       const missingReviews = INITIAL_REVIEWS.filter(r => !existingIds.has(r.id));
@@ -145,15 +180,37 @@ export const storage = {
   // Auth
   getUsers: (): User[] => {
     const data = localStorage.getItem(KEYS.USERS);
+    let users: User[] = [];
+    
     if (!data) {
-      localStorage.setItem(KEYS.USERS, JSON.stringify(INITIAL_USERS));
-      return INITIAL_USERS;
+      users = INITIAL_USERS;
+      localStorage.setItem(KEYS.USERS, JSON.stringify(users));
+    } else {
+      try {
+        users = JSON.parse(data);
+      } catch (e) {
+        console.error("Error parsing users", e);
+        users = INITIAL_USERS;
+      }
+      // Sincronización automática: si faltan usuarios de INITIAL_USERS, los agregamos
+      const existingEmails = new Set(users.map((u: any) => u.email));
+      const missingUsers = INITIAL_USERS.filter(u => !existingEmails.has(u.email));
+      
+      if (missingUsers.length > 0) {
+        users = [...users, ...missingUsers];
+        localStorage.setItem(KEYS.USERS, JSON.stringify(users));
+      }
     }
-    return JSON.parse(data);
+    return users;
   },
   getCurrentUser: (): User | null => {
     const data = localStorage.getItem(KEYS.CURRENT_USER);
-    return data ? JSON.parse(data) : null;
+    try {
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      console.error("Error parsing current user", e);
+      return null;
+    }
   },
   setCurrentUser: (user: User | null) => {
     if (user) {
@@ -193,7 +250,12 @@ export const storage = {
       localStorage.setItem(KEYS.CONFIG, JSON.stringify(INITIAL_CONFIG));
       return INITIAL_CONFIG;
     }
-    return JSON.parse(data);
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error("Error parsing config", e);
+      return INITIAL_CONFIG;
+    }
   },
   saveConfig: (config: HotelConfig) => {
     localStorage.setItem(KEYS.CONFIG, JSON.stringify(config));
@@ -206,7 +268,12 @@ export const storage = {
       localStorage.setItem(KEYS.GALLERY, JSON.stringify(INITIAL_GALLERY));
       return INITIAL_GALLERY;
     }
-    return JSON.parse(data);
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error("Error parsing gallery", e);
+      return INITIAL_GALLERY;
+    }
   },
   saveGalleryImage: (image: GalleryImage) => {
     const gallery = storage.getGallery();
@@ -226,7 +293,12 @@ export const storage = {
   // Complaints
   getComplaints: (): Complaint[] => {
     const data = localStorage.getItem(KEYS.COMPLAINTS);
-    return data ? JSON.parse(data) : [];
+    try {
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error("Error parsing complaints", e);
+      return [];
+    }
   },
   saveComplaint: (complaint: Complaint) => {
     const complaints = storage.getComplaints();
@@ -241,5 +313,77 @@ export const storage = {
   deleteComplaint: (id: string) => {
     const complaints = storage.getComplaints().filter(c => c.id !== id);
     localStorage.setItem(KEYS.COMPLAINTS, JSON.stringify(complaints));
+  },
+
+  // Tenants (Super Admin)
+  getTenants: (): Tenant[] => {
+    const data = localStorage.getItem(KEYS.TENANTS);
+    if (!data) {
+      localStorage.setItem(KEYS.TENANTS, JSON.stringify(INITIAL_TENANTS));
+      return INITIAL_TENANTS;
+    }
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error("Error parsing tenants", e);
+      return INITIAL_TENANTS;
+    }
+  },
+  saveTenant: (tenant: Tenant) => {
+    const tenants = storage.getTenants();
+    const index = tenants.findIndex(t => t.id === tenant.id);
+    if (index >= 0) {
+      tenants[index] = tenant;
+    } else {
+      tenants.push(tenant);
+    }
+    localStorage.setItem(KEYS.TENANTS, JSON.stringify(tenants));
+  },
+  deleteTenant: (id: string) => {
+    const tenants = storage.getTenants().filter(t => t.id !== id);
+    localStorage.setItem(KEYS.TENANTS, JSON.stringify(tenants));
+  },
+
+  // Tenant Invoices
+  getTenantInvoices: (): TenantInvoice[] => {
+    const data = localStorage.getItem(KEYS.TENANT_INVOICES);
+    try {
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error("Error parsing tenant invoices", e);
+      return [];
+    }
+  },
+  saveTenantInvoice: (invoice: TenantInvoice) => {
+    const invoices = storage.getTenantInvoices();
+    const index = invoices.findIndex(i => i.id === invoice.id);
+    if (index >= 0) {
+      invoices[index] = invoice;
+    } else {
+      invoices.push(invoice);
+    }
+    localStorage.setItem(KEYS.TENANT_INVOICES, JSON.stringify(invoices));
+  },
+  deleteTenantInvoice: (id: string) => {
+    const invoices = storage.getTenantInvoices().filter(i => i.id !== id);
+    localStorage.setItem(KEYS.TENANT_INVOICES, JSON.stringify(invoices));
+  },
+
+  // Global Config
+  getGlobalConfig: (): GlobalConfig => {
+    const data = localStorage.getItem(KEYS.GLOBAL_CONFIG);
+    if (!data) {
+      localStorage.setItem(KEYS.GLOBAL_CONFIG, JSON.stringify(INITIAL_GLOBAL_CONFIG));
+      return INITIAL_GLOBAL_CONFIG;
+    }
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error("Error parsing global config", e);
+      return INITIAL_GLOBAL_CONFIG;
+    }
+  },
+  saveGlobalConfig: (config: GlobalConfig) => {
+    localStorage.setItem(KEYS.GLOBAL_CONFIG, JSON.stringify(config));
   }
 };

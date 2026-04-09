@@ -16,6 +16,7 @@ export enum RoomStatus {
 export interface Room {
   id: string;
   number: string;
+  floor: string; // Added floor field
   name: string;
   type: RoomType;
   description: string;
@@ -82,7 +83,7 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'super_admin';
   password?: string;
 }
 
@@ -116,4 +117,45 @@ export interface Complaint {
   type: 'Reclamo' | 'Queja';
   description: string;
   status: 'Pendiente' | 'Atendido';
+}
+
+export interface Tenant {
+  id: string;
+  name: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  plan: 'Básico' | 'Pro' | 'Enterprise';
+  status: 'Activo' | 'Inactivo' | 'Suspendido';
+  createdAt: string;
+  nextBillingDate: string;
+  monthlyFee: number;
+  theme?: {
+    primaryColor: string;
+    logoUrl?: string;
+    coverUrl?: string;
+  };
+}
+
+export interface TenantInvoice {
+  id: string;
+  tenantId: string;
+  tenantName: string;
+  date: string;
+  dueDate: string;
+  amount: number;
+  status: 'Pagado' | 'Pendiente' | 'Vencido';
+  plan: 'Básico' | 'Pro' | 'Enterprise';
+}
+
+export interface GlobalConfig {
+  platformName: string;
+  supportEmail: string;
+  supportPhone: string;
+  defaultCurrency: string;
+  plans: {
+    basic: { price: number; maxRooms: number; maxUsers: number };
+    pro: { price: number; maxRooms: number; maxUsers: number };
+    enterprise: { price: number; maxRooms: number; maxUsers: number };
+  };
 }

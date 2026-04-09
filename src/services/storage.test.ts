@@ -20,6 +20,7 @@ describe('storage service', () => {
       const newRoom = {
         id: 'test-room-1',
         number: '101',
+        floor: '1',
         name: 'Test Room',
         type: RoomType.Standard,
         price: 100,
@@ -56,6 +57,7 @@ describe('storage service', () => {
       const roomToDelete = {
         id: 'room-to-delete',
         number: '999',
+        floor: '1',
         name: 'Temporary Room',
         type: RoomType.Standard,
         price: 50,

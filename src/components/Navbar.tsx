@@ -3,17 +3,17 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogOut, Hotel } from 'lucide-react';
 import { storage } from '../services/storage';
 import { User as UserType } from '../types';
+import { useTenant } from '../TenantContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
-  const [config, setConfig] = useState(storage.getConfig());
+  const { currentTenant } = useTenant();
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     setCurrentUser(storage.getCurrentUser());
-    setConfig(storage.getConfig());
   }, [location]);
 
   const handleLogout = () => {
@@ -35,13 +35,13 @@ export default function Navbar() {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3">
-              {config.logo ? (
-                <img src={config.logo} alt={config.name} className="h-10 w-auto object-contain" />
+              {currentTenant?.theme?.logoUrl ? (
+                <img src={currentTenant.theme.logoUrl} alt={currentTenant.name} className="h-10 w-auto object-contain" />
               ) : (
-                <Hotel className="h-8 w-8 text-indigo-600" />
+                <Hotel className="h-8 w-8" style={{ color: currentTenant?.theme?.primaryColor || '#4f46e5' }} />
               )}
               <span className="text-xl font-bold tracking-tight text-gray-900">
-                {config.name}
+                {currentTenant?.name || 'Lumina Hotel & Spa'}
               </span>
             </Link>
           </div>
@@ -64,7 +64,7 @@ export default function Navbar() {
               <div className="flex items-center space-x-4">
                 <Link
                   to={currentUser.role === 'admin' ? '/admin' : '/user'}
-                  className="flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+                  className="flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-[var(--color-primary)] transition-colors"
                 >
                   <User className="h-4 w-4" />
                   <span>{currentUser.name}</span>
@@ -79,7 +79,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="btn-primary py-2 px-6 text-sm"
+                className="py-2 px-6 text-sm text-white rounded-lg font-semibold transition-all shadow-sm active:scale-95 bg-[var(--color-primary)] hover:opacity-90"
               >
                 Acceso Huéspedes
               </Link>
