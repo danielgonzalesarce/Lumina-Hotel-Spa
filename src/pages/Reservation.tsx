@@ -135,45 +135,11 @@ export default function ReservationPage() {
 
     storage.saveReservation(newReservation);
 
-    try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          roomName: room.name,
-          price: depositAmount,
-          totalPrice: totalPrice,
-          reservationId: reservationId,
-          roomId: room.id,
-          origin: window.location.origin,
-        }),
-      });
-
-      const data = await response.json();
-      
-      if (data.url && paymentWindow) {
-        // If it's simulated, it's an internal route now, so we can use the same window
-        // to avoid pop-up blockers entirely.
-        if (data.simulated) {
-          if (paymentWindow) paymentWindow.close();
-          window.location.href = data.url;
-        } else {
-          // For real Stripe, we must use the new tab
-          paymentWindow.location.href = data.url;
-          setIsProcessing(false);
-        }
-      } else {
-        if (paymentWindow) paymentWindow.close();
-        throw new Error(data.message || data.error || 'No se pudo iniciar el proceso de pago');
-      }
-    } catch (err: any) {
-      if (paymentWindow) paymentWindow.close();
-      console.error('Payment error:', err);
-      setError(err.message || 'Ocurrió un error al procesar el pago. Por favor intente de nuevo.');
-      setIsProcessing(false);
-    }
+    // Simulate payment process locally without calling external API
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Redirect to success URL locally
+    window.location.href = `/reservacion?roomId=${room.id}&success=true&reservationId=${reservationId}&simulated=true`;
   };
 
   const Skeleton = () => (

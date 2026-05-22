@@ -251,12 +251,12 @@ export const INITIAL_CONFIG: HotelConfig = {
 };
 
 export const INITIAL_GALLERY: GalleryImage[] = [
-  { id: '1', url: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800', title: 'Fachada Principal' },
-  { id: '2', url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800', title: 'Piscina Infinity' },
-  { id: '3', url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800', title: 'Lobby de Lujo' },
-  { id: '4', url: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=800', title: 'Spa & Relax' },
-  { id: '5', url: 'https://images.unsplash.com/photo-1551882547-ff43c63fe78d?auto=format&fit=crop&q=80&w=800', title: 'Restaurante Gourmet' },
-  { id: '6', url: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=800', title: 'Suite Panorámica' },
+  { id: '1', url: 'https://images.unsplash.com/photo-1564013799912-ab6d00164c91?auto=format&fit=crop&q=80&w=800', title: 'Fachada Principal' },
+  { id: '2', url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=800', title: 'Piscina Infinity' },
+  { id: '3', url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800', title: 'Lobby de Lujo' },
+  { id: '4', url: 'https://images.unsplash.com/photo-1540555700478-4bbe28948cef?auto=format&fit=crop&q=80&w=800', title: 'Spa & Relax' },
+  { id: '5', url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800', title: 'Restaurante Gourmet' },
+  { id: '6', url: 'https://images.unsplash.com/photo-1590490360170-07f7c46ef52c?auto=format&fit=crop&q=80&w=800', title: 'Suite Panorámica' },
 ];
 
 export const INITIAL_TENANTS: Tenant[] = [

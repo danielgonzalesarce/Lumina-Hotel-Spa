@@ -20,6 +20,7 @@ import ProjectInfo from './pages/ProjectInfo';
 import SimulatedCheckout from './pages/SimulatedCheckout';
 
 import { TenantProvider } from './TenantContext';
+import { AuthProvider } from './AuthContext';
 
 function AppContent() {
   const location = useLocation();
@@ -56,9 +57,11 @@ function AppContent() {
 export default function App() {
   return (
     <TenantProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
     </TenantProvider>
   );
 }

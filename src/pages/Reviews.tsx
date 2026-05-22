@@ -48,15 +48,26 @@ export default function ReviewsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16 space-y-12">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-        <div className="text-center md:text-left space-y-2">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Reseñas de Clientes</h1>
-          <p className="text-gray-600">Descubra lo que otros huéspedes opinan sobre su estancia.</p>
+    <div className="w-full -mt-20">
+      <div className="relative w-full h-[400px] mb-12 shadow-2xl overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=2000&q=80"
+          alt="Restaurante elegante"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"></div>
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center space-y-3 px-4 drop-shadow-lg pt-20">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tighter">Reseñas de Huéspedes</h1>
+          <p className="text-slate-100 font-light text-xl md:text-2xl max-w-2xl mx-auto">
+            Descubra las experiencias inigualables de quienes nos eligieron.
+          </p>
         </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 py-12 space-y-12">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-8 py-4 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
+          className="flex items-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white rounded-full font-bold hover:opacity-90 transition-all shadow-sm"
         >
           <Plus className="h-5 w-5" /> Dejar una reseña
         </button>
@@ -70,17 +81,17 @@ export default function ReviewsPage() {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-xl space-y-6 max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold text-gray-900">Nueva Reseña</h3>
+            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Nueva Reseña</h3>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 block">Calificación</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block ml-1">Calificación</label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setFormData({ ...formData, rating: star })}
-                      className={`p-2 transition-colors ${formData.rating >= star ? 'text-yellow-400' : 'text-gray-200'}`}
+                      className={`p-2 transition-colors ${formData.rating >= star ? 'text-yellow-400' : 'text-slate-200'}`}
                     >
                       <Star className="h-8 w-8 fill-current" />
                     </button>
@@ -88,11 +99,11 @@ export default function ReviewsPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 block">Comentario</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block ml-1">Comentario</label>
                 <textarea
                   required
                   rows={4}
-                  className="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all"
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white outline-none transition-all"
                   placeholder="Cuéntenos su experiencia..."
                   value={formData.comment}
                   onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
@@ -101,14 +112,14 @@ export default function ReviewsPage() {
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all"
+                  className="btn-primary flex-1 !py-4"
                 >
                   Enviar Reseña
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all"
+                  className="btn-secondary flex-1 !py-4"
                 >
                   Cancelar
                 </button>
@@ -118,12 +129,12 @@ export default function ReviewsPage() {
         )}
       </AnimatePresence>
 
-      <div className="flex justify-between items-center bg-white p-6 rounded-3xl border border-gray-100">
+      <div className="flex justify-between items-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
         <div className="flex items-center gap-4">
-          <Filter className="h-5 w-5 text-gray-400" />
-          <span className="text-sm font-semibold text-gray-700">Ordenar por:</span>
+          <Filter className="h-5 w-5 text-slate-400" />
+          <span className="text-sm font-semibold text-slate-700">Ordenar por:</span>
           <select
-            className="bg-transparent text-sm font-bold text-indigo-600 focus:outline-none"
+            className="bg-transparent text-sm font-bold text-[var(--color-primary)] focus:outline-none"
             value={filter}
             onChange={(e) => setFilter(e.target.value as any)}
           >
@@ -131,7 +142,7 @@ export default function ReviewsPage() {
             <option value="rating">Mejor puntuación</option>
           </select>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-slate-500 font-medium">
           {sortedReviews.length} Reseñas encontradas
         </div>
       </div>
@@ -141,25 +152,26 @@ export default function ReviewsPage() {
           <motion.div
             key={review.id}
             layout
-            className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow space-y-6"
+            className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow space-y-6"
           >
             <div className="flex justify-between items-start">
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-4 w-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                  <Star key={i} className={`h-4 w-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`} />
                 ))}
               </div>
-              <span className="text-xs text-gray-400">{review.date}</span>
+              <span className="text-xs text-slate-400 font-medium">{review.date}</span>
             </div>
-            <p className="text-gray-700 leading-relaxed italic">"{review.comment}"</p>
-            <div className="flex items-center gap-3 pt-4 border-t border-gray-50">
-              <div className="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">
+            <p className="text-slate-600 leading-relaxed italic">"{review.comment}"</p>
+            <div className="flex items-center gap-3 pt-4 border-t border-slate-50">
+              <div className="h-10 w-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 font-bold">
                 {review.userName.charAt(0)}
               </div>
-              <span className="font-bold text-gray-900">{review.userName}</span>
+              <span className="font-bold text-slate-900">{review.userName}</span>
             </div>
           </motion.div>
         ))}
+      </div>
       </div>
     </div>
   );

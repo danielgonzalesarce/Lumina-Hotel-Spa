@@ -17,26 +17,25 @@ import { Bar, Pie } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
+import { useAuth } from '../AuthContext';
+
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [admin, setAdmin] = useState<UserType | null>(null);
+  const { currentUser } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const current = storage.getCurrentUser();
-    if (!current || current.role !== 'super_admin') {
+    if (!currentUser || currentUser.role !== 'super_admin') {
       navigate('/login');
-    } else {
-      setAdmin(current);
     }
-  }, [navigate]);
+  }, [navigate, currentUser]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location]);
 
-  if (!admin) return null;
+  if (!currentUser) return null;
 
   const sidebarLinks = [
     { name: 'Dashboard', path: '/superadmin', icon: LayoutDashboard },
@@ -204,8 +203,8 @@ function SuperAdminOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
           <h3 className="text-xl font-bold mb-8 text-slate-900">Distribución de Planes</h3>
-          <div className="h-64 flex justify-center">
-            <Pie data={pieData} options={{ responsive: true }} />
+          <div className="h-64 w-full relative">
+            <Pie data={pieData} options={{ responsive: true, maintainAspectRatio: false }} />
           </div>
         </div>
         <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">

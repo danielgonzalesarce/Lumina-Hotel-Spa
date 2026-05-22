@@ -5,9 +5,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { storage } from '../services/storage';
 import { User as UserType } from '../types';
 import { useTenant } from '../TenantContext';
+import { useAuth } from '../AuthContext';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setCurrentUser } = useAuth();
   const { currentTenant, availableTenants, setCurrentTenant } = useTenant();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -32,7 +34,7 @@ export default function Login() {
     if (isLogin) {
       const user = users.find(u => u.email === email && u.password === password);
       if (user) {
-        storage.setCurrentUser(user);
+        setCurrentUser(user);
         navigate(user.role === 'super_admin' ? '/superadmin' : user.role === 'admin' ? '/admin' : '/user');
       } else {
         setError('Credenciales incorrectas. Intente con superadmin@empresa.com / super o admin@hotel.com / admin');
@@ -154,31 +156,31 @@ export default function Login() {
                 </motion.div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {!isLogin && (
                   <>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre Completo</label>
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
                       <div className="relative group">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors" />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                         <input
                           type="text"
                           required
-                          className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+                          className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all outline-none"
                           placeholder="Juan Pérez"
                           value={fullName}
                           onChange={e => setFullName(e.target.value)}
                         />
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Teléfono</label>
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Teléfono</label>
                       <div className="relative group">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors" />
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                         <input
                           type="tel"
                           required
-                          className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+                          className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all outline-none"
                           placeholder="+51 999 999 999"
                           value={phone}
                           onChange={e => setPhone(e.target.value)}
@@ -188,14 +190,14 @@ export default function Login() {
                   </>
                 )}
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Email</label>
                   <div className="relative group">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                     <input
                       type="email"
                       required
-                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+                      className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all outline-none"
                       placeholder="ejemplo@hotel.com"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
@@ -203,14 +205,14 @@ export default function Login() {
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Contraseña</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Contraseña</label>
                   <div className="relative group">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                     <input
                       type="password"
                       required
-                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+                      className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all outline-none"
                       placeholder="••••••••"
                       value={password}
                       onChange={e => setPassword(e.target.value)}
@@ -221,8 +223,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  style={{ backgroundColor: currentTenant?.theme?.primaryColor || '#4f46e5' }}
-                  className="w-full py-5 text-white rounded-2xl font-bold text-lg transition-all shadow-xl flex items-center justify-center gap-3 group opacity-90 hover:opacity-100 disabled:opacity-50"
+                  className="w-full btn-primary !py-5 flex items-center justify-center gap-3 text-lg"
                 >
                   {isLoading ? (
                     <>
@@ -230,11 +231,11 @@ export default function Login() {
                     </>
                   ) : isLogin ? (
                     <>
-                      <LogIn className="h-5 w-5 group-hover:translate-x-1 transition-transform" /> Iniciar Sesión
+                      <LogIn className="h-5 w-5" /> Iniciar Sesión
                     </>
                   ) : (
                     <>
-                      <UserPlus className="h-5 w-5 group-hover:scale-110 transition-transform" /> Crear Cuenta
+                      <UserPlus className="h-5 w-5" /> Crear Cuenta
                     </>
                   )}
                 </button>

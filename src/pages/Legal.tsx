@@ -4,14 +4,31 @@ import { motion } from 'motion/react';
 
 export default function Legal() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16 space-y-16">
+    <div className="w-full -mt-20">
+      <div className="relative w-full h-[300px] mb-12 shadow-2xl overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=2000&q=80"
+          alt="Arquitectura profesional"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"></div>
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center space-y-3 px-4 drop-shadow-lg pt-20">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tighter">Información Legal</h1>
+          <p className="text-slate-100 font-light text-lg md:text-xl max-w-2xl mx-auto">
+            Políticas de seguridad y condiciones de servicio.
+          </p>
+        </div>
+      </div>
+      <div className="max-w-4xl mx-auto px-4 py-12 space-y-16">
+
+
       {/* Políticas de Seguridad */}
       <section id="seguridad" className="space-y-8">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-green-100 text-green-600 rounded-2xl">
             <Shield className="h-8 w-8" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900">Políticas de Seguridad</h1>
+          <h2 className="text-4xl font-bold text-gray-900">Políticas de Seguridad</h2>
         </div>
         <div className="bg-white p-8 md:p-12 rounded-[3rem] border border-gray-100 shadow-sm space-y-6 text-gray-700 leading-relaxed">
           <p>En Lumina Hotel & Spa, la seguridad de nuestros huéspedes y colaboradores es nuestra máxima prioridad. Hemos implementado protocolos rigurosos para garantizar un entorno seguro y tranquilo.</p>
@@ -72,6 +89,7 @@ export default function Legal() {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 }

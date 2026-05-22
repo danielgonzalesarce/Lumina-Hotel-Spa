@@ -5,21 +5,20 @@ import { storage } from '../services/storage';
 import { Reservation, User as UserType } from '../types';
 import { formatCurrency } from '../lib/utils';
 
+import { useAuth } from '../AuthContext';
+
 export default function UserDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState<UserType | null>(null);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
-    const current = storage.getCurrentUser();
-    if (!current || current.role !== 'user') {
+    if (!currentUser || currentUser.role !== 'user') {
       navigate('/login');
-    } else {
-      setUser(current);
     }
-  }, [navigate]);
+  }, [navigate, currentUser]);
 
-  if (!user) return null;
+  if (!currentUser) return null;
 
   const sidebarLinks = [
     { name: 'Dashboard', path: '/user', icon: LayoutDashboard },
@@ -48,10 +47,10 @@ export default function UserDashboard() {
           <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-12 w-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
-                {user.name.charAt(0)}
+                {currentUser.name.charAt(0)}
               </div>
               <div>
-                <div className="font-bold text-gray-900">{user.name}</div>
+                <div className="font-bold text-gray-900">{currentUser.name}</div>
                 <div className="text-xs text-gray-500">Huésped Lumina</div>
               </div>
             </div>
@@ -83,9 +82,9 @@ export default function UserDashboard() {
         {/* Content */}
         <main className="flex-grow">
           <Routes>
-            <Route index element={<UserOverview user={user} />} />
-            <Route path="mis-reservas" element={<UserReservations user={user} />} />
-            <Route path="perfil" element={<UserProfile user={user} />} />
+            <Route index element={<UserOverview user={currentUser} />} />
+            <Route path="mis-reservas" element={<UserReservations user={currentUser} />} />
+            <Route path="perfil" element={<UserProfile user={currentUser} />} />
           </Routes>
         </main>
       </div>

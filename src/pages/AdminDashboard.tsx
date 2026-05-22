@@ -22,26 +22,26 @@ import { Bar, Pie } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
+import { useAuth } from '../AuthContext';
+import { useTenant } from '../TenantContext';
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [admin, setAdmin] = useState<UserType | null>(null);
+  const { currentUser } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const current = storage.getCurrentUser();
-    if (!current || current.role !== 'admin') {
+    if (!currentUser || currentUser.role !== 'admin') {
       navigate('/login');
-    } else {
-      setAdmin(current);
     }
-  }, [navigate]);
+  }, [navigate, currentUser]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location]);
 
-  if (!admin) return null;
+  if (!currentUser) return null;
 
   const sidebarLinks = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
@@ -58,23 +58,23 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
       {/* Mobile Header */}
-      <header className="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-2 text-indigo-600 font-bold">
+      <header className="lg:hidden bg-white border-b border-slate-100 p-4 flex items-center justify-between sticky top-0 z-40">
+        <div className="flex items-center gap-2 text-slate-900 font-bold">
           <Bed className="h-6 w-6" />
           <span>Admin Lumina</span>
         </div>
         <div className="flex items-center gap-2">
           <button 
             onClick={() => { storage.setCurrentUser(null); navigate('/'); }}
-            className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+            className="p-2 text-slate-500 hover:bg-slate-50 rounded-lg"
           >
             <LogOut className="h-6 w-6" />
           </button>
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+            className="p-2 text-slate-500 hover:bg-slate-50 rounded-lg"
           >
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -84,18 +84,18 @@ export default function AdminDashboard() {
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 lg:fixed lg:h-screen overflow-y-auto
+        fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 lg:fixed lg:h-screen overflow-y-auto
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="p-8">
-          <div className="hidden lg:flex items-center gap-3 text-indigo-600 font-bold text-xl mb-12">
+          <div className="hidden lg:flex items-center gap-3 text-slate-900 font-bold text-xl mb-12">
             <Bed className="h-8 w-8" />
             <span>Admin Lumina</span>
           </div>
@@ -276,8 +276,8 @@ function AdminOverview() {
         </div>
         <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
           <h3 className="text-xl font-bold mb-8">Distribución por Tipo</h3>
-          <div className="h-64 flex justify-center">
-            <Pie data={pieData} options={{ responsive: true }} />
+          <div className="h-64 w-full relative">
+            <Pie data={pieData} options={{ responsive: true, maintainAspectRatio: false }} />
           </div>
         </div>
       </div>
@@ -512,7 +512,7 @@ function AdminRooms() {
               <label className="text-sm font-semibold block">Fotos de la Habitación</label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {editingRoom.images?.map((img, i) => (
-                  <div key={i} className="relative group aspect-video rounded-xl overflow-hidden border border-gray-200">
+                  <div key={`${i}-${img.length}`} className="relative group aspect-video rounded-xl overflow-hidden border border-gray-200">
                     <img src={img} className="w-full h-full object-cover" />
                     <button
                       type="button"
@@ -639,7 +639,7 @@ function AdminRooms() {
       <div className="flex justify-center gap-2 mt-6">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
           <button
-            key={page}
+            key={`page-${page}`}
             onClick={() => setCurrentPage(page)}
             className={`px-4 py-2 rounded-lg font-bold ${currentPage === page ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200'}`}
           >

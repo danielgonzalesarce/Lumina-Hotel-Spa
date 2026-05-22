@@ -60,16 +60,23 @@ export default function Complaints() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16 space-y-12">
-      <div className="text-center space-y-4">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl mb-4">
-          <Book className="h-8 w-8" />
+    <div className="w-full -mt-20">
+      <div className="relative w-full h-[300px] mb-12 shadow-2xl overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=2000&q=80"
+          alt="Espacio de trabajo profesional"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"></div>
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center space-y-3 px-4 drop-shadow-lg pt-20">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tighter">Libro de Reclamaciones</h1>
+          <p className="text-slate-100 font-light text-lg md:text-xl max-w-2xl mx-auto">
+            Su opinión nos ayuda a mejorar. Estamos comprometidos con su satisfacción.
+          </p>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900">Libro de Reclamaciones</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Conforme a lo establecido en el Código de Protección y Defensa del Consumidor, ponemos a su disposición nuestro Libro de Reclamaciones Virtual.
-        </p>
       </div>
+      <div className="max-w-4xl mx-auto px-4 py-12 space-y-12">
+
 
       <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 rounded-[3rem] border border-gray-100 shadow-xl space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -186,6 +193,7 @@ export default function Complaints() {
           <Send className="h-5 w-5" /> Enviar Reclamación
         </button>
       </form>
+      </div>
     </div>
   );
 }
